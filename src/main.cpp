@@ -7,15 +7,6 @@
 
 using namespace vex;
 
-int data;
-std::ifstream ifs;
-std::ofstream ofs;
-
-int threshold1 = 50;
-int threshold2 = 50;
-int threshold3 = 50;
-int threshold4 = 50;
-
 int currentButton = 0;
 
 typedef struct _colorText
@@ -24,11 +15,11 @@ typedef struct _colorText
   std::string Text;
 } s_colorText;
 
-typedef struct _IFText
+typedef struct _iText
 {
   int Index;
   std::string Text;
-} s_IFText;
+} s_iText;
 
 typedef struct _button
 {
@@ -39,7 +30,7 @@ typedef struct _button
 typedef struct _button2
 {
   int xPos, yPos, width, height, state, size;
-  s_IFText IFText;
+  s_iText iText;
   s_colorText colorText0, colorText1, colorText2, colorText3, colorText4, colorText5, colorText6, colorText7, colorText8, colorText9, colorText10, colorText11;
 } s_button2;
 
@@ -438,33 +429,56 @@ int main()
 {
   vexcodeInit();
 
-  s_IFText IFTexts[12] =
+  int data;
+  std::ifstream ifs;
+  std::ofstream ofs;
+
+  int threshold1 = 50;
+  int threshold2 = 50;
+  int threshold3 = 50;
+  int threshold4 = 50;
+
+  s_iText iTexts[12] =
   {
-    {0, "rMotors+"},
-    {1, "rMotors-"},
-    {2, "FUNCTION 3"},
-    {3, "FUNCTION 4"},
-    {4, "FUNCTION 5"},
-    {5, "FUNCTION 6"},
-    {6, "FUNCTION 7"},
-    {7, "FUNCTION 8"},
+    {0, "LIFT IN"},
+    {1, "LIFT OUT"},
+    {2, "INTAKES IN"},
+    {3, "INTAKES OUT"},
+    {4, "LIFT SAME DIRECTION IN"},
+    {5, "LIFT SAME DIRECTION OUT"},
+    {6, "INTAKES AND LIFT OUT"},
+    {7, "INTAKES AND LIFT IN"},
     {8, "FUNCTION 9"},
     {9, "FUNCTION 10"},
-    {10, "FUNCTION 11"},
+    {10, "SHOOT BALL"},
     {11, "AUTONOMOUS"}
+  };
+
+  s_iText deadbandIText[10] =
+  {
+    {0, "5"},
+    {1, "10"},
+    {2, "15"},
+    {3, "20"},
+    {4, "25"},
+    {5, "30"},
+    {6, "35"},
+    {7, "40"},
+    {8, "45"},
+    {9, "50"}
   };
 
   s_button mainButtons[8] = 
   {
-    {10, 20, 100, 75, 0, 2, s_colorText{Color.red, "RED"}, s_colorText{Color.blue, "BLUE"}},
-    {130, 20, 100, 75, 0, 2, s_colorText{Color.green, "LEFT"}, s_colorText{Color.purple, "RIGHT"}},
-    {250, 20, 100, 75, 0, 2, s_colorText{Color.green, "MATCH"}, s_colorText{Color.purple, "SKILLS"}},
-    {370, 20, 100, 75, 0, 1, s_colorText{Color.white, ""}},
+    {0, 0, 120, 120, 0, 2, s_colorText{Color.red, "RED"}, s_colorText{Color.blue, "BLUE"}},
+    {120, 0, 120, 120, 0, 2, s_colorText{Color.green, "LEFT"}, s_colorText{Color.green, "RIGHT"}},
+    {240, 0, 120, 120, 0, 2, s_colorText{Color.green, "MATCH"}, s_colorText{Color.green, "SKILLS"}},
+    {360, 0, 120, 120, 0, 2, s_colorText{Color.rgb(210, 105, 30), "SETTINGS"}, s_colorText{Color.rgb(210, 105, 30), "SETTINGS"}},
 
-    {10, 140, 100, 75, 0, 2, s_colorText{Color.yellow, "KEYBINDS"}, s_colorText{Color.yellow, "KEYBINDS"}},
-    {130, 140, 100, 75, 0, 2, s_colorText{Color.yellow, "JOYSTICKS"}, s_colorText{Color.yellow, "JOYSTICKS"}},
-    {250, 140, 100, 75, 0, 2, s_colorText{Color.yellow, "MOTORS"}, s_colorText{Color.yellow, "MOTORS"}},
-    {370, 140, 100, 75, 0, 2, s_colorText{Color.rgb(255, 20, 147), "APPLY[X]"}, s_colorText{Color.rgb(255, 20, 147), "APPLY[X]"}}
+    {0, 120, 120, 120, 0, 2, s_colorText{Color.rgb(210, 105, 30), "KEYBINDS"}, s_colorText{Color.rgb(210, 105, 30), "KEYBINDS"}},
+    {120, 120, 120, 120, 0, 2, s_colorText{Color.rgb(210, 105, 30), "JOYSTICKS"}, s_colorText{Color.rgb(210, 105, 30), "JOYSTICKS"}},
+    {240, 120, 120, 120, 0, 2, s_colorText{Color.rgb(210, 105, 30), "MOTORS"}, s_colorText{Color.rgb(210, 105, 30), "MOTORS"}},
+    {360, 120, 120, 120, 0, 2, s_colorText{Color.rgb(255, 20, 147), "APPLY[X]"}, s_colorText{Color.rgb(255, 20, 147), "APPLY[X]"}}
   };
 
   s_button keybindButtons[14] =
@@ -488,33 +502,90 @@ int main()
 
   s_button fButtons[12] =
   {
-    {0, 0, 480, 120, 0, 12, s_colorText{Color.rgb(255, 128, 0), IFTexts[0].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[1].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[2].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[3].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[4].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[5].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[6].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[7].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[8].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[9].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[10].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[11].Text}},
-    {0, 0, 480, 120, 0, 12, s_colorText{Color.rgb(255, 128, 0), IFTexts[0].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[1].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[2].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[3].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[4].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[5].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[6].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[7].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[8].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[9].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[10].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[11].Text}},
-    {0, 0, 480, 120, 0, 12, s_colorText{Color.rgb(255, 128, 0), IFTexts[0].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[1].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[2].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[3].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[4].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[5].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[6].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[7].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[8].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[9].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[10].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[11].Text}},
-    {0, 0, 480, 120, 0, 12, s_colorText{Color.rgb(255, 128, 0), IFTexts[0].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[1].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[2].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[3].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[4].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[5].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[6].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[7].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[8].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[9].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[10].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[11].Text}},
-    {0, 0, 480, 120, 0, 12, s_colorText{Color.rgb(255, 128, 0), IFTexts[0].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[1].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[2].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[3].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[4].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[5].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[6].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[7].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[8].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[9].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[10].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[11].Text}},
-    {0, 0, 480, 120, 0, 12, s_colorText{Color.rgb(255, 128, 0), IFTexts[0].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[1].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[2].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[3].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[4].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[5].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[6].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[7].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[8].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[9].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[10].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[11].Text}},
-    {0, 0, 480, 120, 0, 12, s_colorText{Color.rgb(255, 128, 0), IFTexts[0].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[1].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[2].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[3].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[4].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[5].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[6].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[7].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[8].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[9].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[10].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[11].Text}},
-    {0, 0, 480, 120, 0, 12, s_colorText{Color.rgb(255, 128, 0), IFTexts[0].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[1].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[2].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[3].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[4].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[5].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[6].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[7].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[8].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[9].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[10].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[11].Text}},
-    {0, 0, 480, 120, 0, 12, s_colorText{Color.rgb(255, 128, 0), IFTexts[0].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[1].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[2].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[3].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[4].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[5].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[6].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[7].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[8].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[9].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[10].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[11].Text}},
-    {0, 0, 480, 120, 0, 12, s_colorText{Color.rgb(255, 128, 0), IFTexts[0].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[1].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[2].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[3].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[4].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[5].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[6].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[7].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[8].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[9].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[10].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[11].Text}},
-    {0, 0, 480, 120, 0, 12, s_colorText{Color.rgb(255, 128, 0), IFTexts[0].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[1].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[2].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[3].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[4].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[5].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[6].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[7].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[8].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[9].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[10].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[11].Text}},
-    {0, 0, 480, 120, 0, 12, s_colorText{Color.rgb(255, 128, 0), IFTexts[0].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[1].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[2].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[3].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[4].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[5].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[6].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[7].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[8].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[9].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[10].Text}, s_colorText{Color.rgb(255, 128, 0), IFTexts[11].Text}}
+    {0, 0, 480, 120, 0, 12, s_colorText{Color.rgb(255, 128, 0), iTexts[0].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[1].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[2].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[3].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[4].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[5].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[6].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[7].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[8].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[9].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[10].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[11].Text}},
+    {0, 0, 480, 120, 0, 12, s_colorText{Color.rgb(255, 128, 0), iTexts[0].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[1].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[2].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[3].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[4].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[5].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[6].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[7].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[8].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[9].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[10].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[11].Text}},
+    {0, 0, 480, 120, 0, 12, s_colorText{Color.rgb(255, 128, 0), iTexts[0].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[1].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[2].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[3].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[4].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[5].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[6].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[7].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[8].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[9].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[10].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[11].Text}},
+    {0, 0, 480, 120, 0, 12, s_colorText{Color.rgb(255, 128, 0), iTexts[0].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[1].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[2].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[3].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[4].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[5].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[6].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[7].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[8].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[9].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[10].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[11].Text}},
+    {0, 0, 480, 120, 0, 12, s_colorText{Color.rgb(255, 128, 0), iTexts[0].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[1].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[2].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[3].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[4].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[5].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[6].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[7].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[8].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[9].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[10].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[11].Text}},
+    {0, 0, 480, 120, 0, 12, s_colorText{Color.rgb(255, 128, 0), iTexts[0].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[1].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[2].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[3].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[4].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[5].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[6].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[7].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[8].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[9].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[10].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[11].Text}},
+    {0, 0, 480, 120, 0, 12, s_colorText{Color.rgb(255, 128, 0), iTexts[0].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[1].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[2].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[3].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[4].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[5].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[6].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[7].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[8].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[9].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[10].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[11].Text}},
+    {0, 0, 480, 120, 0, 12, s_colorText{Color.rgb(255, 128, 0), iTexts[0].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[1].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[2].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[3].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[4].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[5].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[6].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[7].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[8].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[9].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[10].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[11].Text}},
+    {0, 0, 480, 120, 0, 12, s_colorText{Color.rgb(255, 128, 0), iTexts[0].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[1].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[2].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[3].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[4].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[5].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[6].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[7].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[8].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[9].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[10].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[11].Text}},
+    {0, 0, 480, 120, 0, 12, s_colorText{Color.rgb(255, 128, 0), iTexts[0].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[1].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[2].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[3].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[4].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[5].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[6].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[7].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[8].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[9].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[10].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[11].Text}},
+    {0, 0, 480, 120, 0, 12, s_colorText{Color.rgb(255, 128, 0), iTexts[0].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[1].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[2].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[3].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[4].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[5].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[6].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[7].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[8].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[9].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[10].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[11].Text}},
+    {0, 0, 480, 120, 0, 12, s_colorText{Color.rgb(255, 128, 0), iTexts[0].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[1].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[2].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[3].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[4].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[5].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[6].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[7].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[8].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[9].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[10].Text}, s_colorText{Color.rgb(255, 128, 0), iTexts[11].Text}}
+  };
+
+  s_button dButtons[4] =
+  {
+    {0, 0, 480, 120, 0, 10, s_colorText{Color.rgb(255, 128, 0), deadbandIText[0].Text}, s_colorText{Color.rgb(255, 128, 0), deadbandIText[1].Text}, s_colorText{Color.rgb(255, 128, 0), deadbandIText[2].Text}, s_colorText{Color.rgb(255, 128, 0), deadbandIText[3].Text}, s_colorText{Color.rgb(255, 128, 0), deadbandIText[4].Text}, s_colorText{Color.rgb(255, 128, 0), deadbandIText[5].Text}, s_colorText{Color.rgb(255, 128, 0), deadbandIText[6].Text}, s_colorText{Color.rgb(255, 128, 0), deadbandIText[7].Text}, s_colorText{Color.rgb(255, 128, 0), deadbandIText[8].Text}, s_colorText{Color.rgb(255, 128, 0), deadbandIText[9].Text}},
+    {0, 0, 480, 120, 0, 10, s_colorText{Color.rgb(255, 128, 0), deadbandIText[0].Text}, s_colorText{Color.rgb(255, 128, 0), deadbandIText[1].Text}, s_colorText{Color.rgb(255, 128, 0), deadbandIText[2].Text}, s_colorText{Color.rgb(255, 128, 0), deadbandIText[3].Text}, s_colorText{Color.rgb(255, 128, 0), deadbandIText[4].Text}, s_colorText{Color.rgb(255, 128, 0), deadbandIText[5].Text}, s_colorText{Color.rgb(255, 128, 0), deadbandIText[6].Text}, s_colorText{Color.rgb(255, 128, 0), deadbandIText[7].Text}, s_colorText{Color.rgb(255, 128, 0), deadbandIText[8].Text}, s_colorText{Color.rgb(255, 128, 0), deadbandIText[9].Text}},
+    {0, 0, 480, 120, 0, 10, s_colorText{Color.rgb(255, 128, 0), deadbandIText[0].Text}, s_colorText{Color.rgb(255, 128, 0), deadbandIText[1].Text}, s_colorText{Color.rgb(255, 128, 0), deadbandIText[2].Text}, s_colorText{Color.rgb(255, 128, 0), deadbandIText[3].Text}, s_colorText{Color.rgb(255, 128, 0), deadbandIText[4].Text}, s_colorText{Color.rgb(255, 128, 0), deadbandIText[5].Text}, s_colorText{Color.rgb(255, 128, 0), deadbandIText[6].Text}, s_colorText{Color.rgb(255, 128, 0), deadbandIText[7].Text}, s_colorText{Color.rgb(255, 128, 0), deadbandIText[8].Text}, s_colorText{Color.rgb(255, 128, 0), deadbandIText[9].Text}},
+    {0, 0, 480, 120, 0, 10, s_colorText{Color.rgb(255, 128, 0), deadbandIText[0].Text}, s_colorText{Color.rgb(255, 128, 0), deadbandIText[1].Text}, s_colorText{Color.rgb(255, 128, 0), deadbandIText[2].Text}, s_colorText{Color.rgb(255, 128, 0), deadbandIText[3].Text}, s_colorText{Color.rgb(255, 128, 0), deadbandIText[4].Text}, s_colorText{Color.rgb(255, 128, 0), deadbandIText[5].Text}, s_colorText{Color.rgb(255, 128, 0), deadbandIText[6].Text}, s_colorText{Color.rgb(255, 128, 0), deadbandIText[7].Text}, s_colorText{Color.rgb(255, 128, 0), deadbandIText[8].Text}, s_colorText{Color.rgb(255, 128, 0), deadbandIText[9].Text}}
   };
 
   s_button joystickButtons[5] =
   {
-    {0, 0, 96, 120, 0, 3, s_colorText{Color.rgb(255, 128, 0), "Tank"}, s_colorText{Color.rgb(255, 128, 0), "1 Arcade"}, s_colorText{Color.rgb(255, 128, 0), "2, Arcade"}},
-    {96, 0, 96, 120, 0, 2, s_colorText{Color.rgb(255, 128, 0), "Thresholds"}, s_colorText{Color.rgb(255, 128, 0), "Thresholds"}},
-    {192, 0, 96, 120, 0, 2, s_colorText{Color.rgb(255, 128, 0), "Proportion"}, s_colorText{Color.rgb(255, 128, 0), "Proportion"}},
-    {288, 0, 96, 120, 0, 2, s_colorText{Color.rgb(255, 128, 0), "Turn Type"}, s_colorText{Color.rgb(255, 128, 0), "Turn Type"}},
-    {384, 0, 96, 120, 0, 2, s_colorText{Color.rgb(255, 128, 0), "Keybinds"}, s_colorText{Color.rgb(255, 128, 0), "Keybinds"}}
+    {0, 0, 96, 120, 0, 3, s_colorText{Color.green, "TANK"}, s_colorText{Color.green, "1 ARCADE"}, s_colorText{Color.green, "2 ARCADE"}},
+    {96, 0, 96, 120, 0, 2, s_colorText{Color.rgb(16, 133, 72), "TURN TYPE"}, s_colorText{Color.rgb(16, 133, 72), "TURN TYPE"}},
+    {192, 0, 96, 120, 0, 2, s_colorText{Color.rgb(16, 133, 72), "KEYBINDS"}, s_colorText{Color.rgb(16, 133, 72), "KEYBINDS"}},
+    {288, 0, 96, 120, 0, 2, s_colorText{Color.rgb(210, 105, 30), "DEADBANDS"}, s_colorText{Color.rgb(210, 105, 30), "DEADBANDS"}},
+    {384, 0, 96, 120, 0, 2, s_colorText{Color.rgb(210, 105, 30), "PROPORTION"}, s_colorText{Color.rgb(210, 105, 30), "PROPORTION"}}
+  };
+
+  s_button deadbandsButtons[4] =
+  {
+    {0, 0, 120, 120, 0, 2, s_colorText{Color.purple, "AXIS 1"}, s_colorText{Color.purple, "AXIS 1"}},
+    {120, 0, 120, 120, 0, 2, s_colorText{Color.purple, "AXIS 2"}, s_colorText{Color.purple, "AXIS 2"}},
+    {240, 0, 120, 120, 0, 2, s_colorText{Color.purple, "AXIS 3"}, s_colorText{Color.purple, "AXIS 3"}},
+    {360, 0, 120, 120, 0, 2, s_colorText{Color.purple, "AXIS 4"}, s_colorText{Color.purple, "AXIS 4"}}
+  };
+
+  s_button turnTypeButtons[2] =
+  {
+    {0, 0, 160, 120, 0, 2, s_colorText{Color.green, "RELATIVE"}, s_colorText{Color.green, "ABSOLUTE"}},
+    {0, 0, 160, 120, 0, 2, s_colorText{Color.green, "RELATIVE"}, s_colorText{Color.green, "ABSOLUTE"}}
+  };
+
+  s_button ttr1Buttons[2] =
+  {
+    {160, 0, 160, 120, 0, 1, s_colorText{Color.rgb(83, 62, 138), "L: DRIVE & TURN"}},
+    {320, 0, 160, 120, 0, 1, s_colorText{Color.rgb(83, 62, 138), "R: KEYBINDS"}}
+  };
+
+  s_button tta1Buttons[2] =
+  {
+    {160, 0, 160, 120, 0, 1, s_colorText{Color.rgb(83, 62, 138), "L: DRIVE & TURN"}},
+    {320, 0, 160, 120, 0, 1, s_colorText{Color.rgb(83, 62, 138), "R: ABS-TURN"}}
+  };
+
+  s_button ttr2Buttons[2] =
+  {
+    {160, 0, 160, 120, 0, 1, s_colorText{Color.rgb(83, 62, 138), "L: DRIVE"}},
+    {320, 0, 160, 120, 0, 1, s_colorText{Color.rgb(83, 62, 138), "R: TURN"}}
+  };
+
+  s_button tta2Buttons[2] =
+  {
+    {160, 0, 160, 120, 0, 1, s_colorText{Color.rgb(83, 62, 138), "L: DRIVE"}},
+    {320, 0, 160, 120, 0, 1, s_colorText{Color.rgb(83, 62, 138), "R: ABS-TURN"}}
+  };
+
+  s_button settingsButtons[2] =
+  {
+    {0, 0, 240, 120, 0, 2, s_colorText{Color.green, "2 WHEEL TURN"}, s_colorText{Color.green, "4 WHEEL TURN"}},
+    {240, 0, 240, 120, 0, 2, s_colorText{Color.green, "ERRORS OFF"}, s_colorText{Color.green, "ERRORS ON"}}
   };
 
   s_button backButtons2x2[2] =
   {
     {0, 120, 240, 120, 0, 2, s_colorText{Color.rgb(255, 20, 147), "BACK[B]"}, s_colorText{Color.rgb(255, 20, 147), "BACK[B]"}},
     {240, 120, 240, 120, 0, 2, s_colorText{Color.rgb(255, 20, 147), "APPLY[X]"}, s_colorText{Color.rgb(255, 20, 147), "APPLY[X]"}}
+  };
+
+  s_button messageButtons[1] =
+  {
+    {0, 0, 480, 120, 0, 1, s_colorText{Color.black, "REQUIRES ARCADE"}},
   };
 
 
@@ -534,9 +605,31 @@ int main()
   }
   ifs.close();
 
+  ifs.open("joysticks.txt", ifs.in);
+  ifs >> data;
+  joystickButtons[0].state = data;
+  ifs.close();
+
+  ifs.open("deadbands.txt", ifs.in);
+  for(int i = 0; i < 4; i++)
+  {
+    ifs >> data;
+    dButtons[i].state = data;
+  }
+  ifs.close();
+
+  ifs.open("settings.txt", ifs.in);
+  for(int i = 0; i < 2; i++)
+  {
+    ifs >> data;
+    settingsButtons[i].state = data;
+  }
+  ifs.close();
+
   bool applied = false;
   int currentMenu = 0;
   int currentKey = 0;
+  int currentDeadband = 0;
   int btnNextRow = 0;
   int maxBtn = 0;
   int t_prevBtn = 0;
@@ -546,19 +639,10 @@ int main()
   {
     while(!applied)
     {
-      if(Controller.ButtonA.pressing() || Controller.ButtonB.pressing() || Controller.ButtonX.pressing() || Controller.ButtonY.pressing() ||
-      Controller.ButtonUp.pressing() || Controller.ButtonDown.pressing() || Controller.ButtonLeft.pressing() || Controller.ButtonRight.pressing() || 
-      Controller.ButtonL1.pressing()  || Controller.ButtonL2.pressing()  || Controller.ButtonR1.pressing()  || Controller.ButtonR2.pressing() || 
-      Controller.Axis3.value() < -threshold3 || Controller.Axis4.value() < -threshold4 || Controller.Axis3.value() > threshold3 || Controller.Axis4.value() > threshold4 ||
-      Controller.Axis1.value() < -threshold1 || Controller.Axis2.value() < -threshold2 || Controller.Axis1.value() > threshold1|| Controller.Axis2.value() > threshold2 ||
-      LCD.pressing())
-      Task.sleep(250);
-      else Task.sleep(15);
-
-      if(Controller.ButtonL1.pressing() || Controller.ButtonL2.pressing() || Controller.ButtonLeft.pressing() || Controller.Axis1.value() < -threshold1 || Controller.Axis4.value() < -threshold4) currentButton--;
-      if(Controller.ButtonR1.pressing() || Controller.ButtonR2.pressing() || Controller.ButtonRight.pressing() || Controller.Axis1.value() > threshold1 || Controller.Axis4.value() > threshold4) currentButton++;
-      if(Controller.ButtonUp.pressing() || Controller.Axis3.value() > threshold3 || Controller.Axis2.value() > threshold2) currentButton -= btnNextRow;
-      if(Controller.ButtonDown.pressing() || Controller.Axis3.value() < -threshold3 || Controller.Axis2.value() < -threshold2) currentButton += btnNextRow;
+      if(Controller.ButtonL1.pressing() || Controller.ButtonL2.pressing() || Controller.ButtonLeft.pressing() || Controller.Axis1.position() < -threshold1 || Controller.Axis4.position() < -threshold4) currentButton--;
+      if(Controller.ButtonR1.pressing() || Controller.ButtonR2.pressing() || Controller.ButtonRight.pressing() || Controller.Axis1.position() > threshold1 || Controller.Axis4.position() > threshold4) currentButton++;
+      if(Controller.ButtonUp.pressing() || Controller.Axis3.position() > threshold3 || Controller.Axis2.position() > threshold2) currentButton -= btnNextRow;
+      if(Controller.ButtonDown.pressing() || Controller.Axis3.position() < -threshold3 || Controller.Axis2.position() < -threshold2) currentButton += btnNextRow;
 
       if(currentButton > maxBtn) currentButton = maxBtn;
       else if(currentButton < 0) currentButton = 0;
@@ -589,10 +673,24 @@ int main()
 
         if(mainButtons[7].state == 1 || Controller.ButtonX.pressing()) applied = true;
 
+        if(mainButtons[3].state > 0)
+        {
+          mainButtons[3].state = 0;
+          currentMenu = 7;
+          currentButton = 0;
+        }
+
         if(mainButtons[4].state > 0)
         {
           mainButtons[4].state = 0;
           currentMenu = 1;
+          currentButton = 0;
+        }
+
+        if(mainButtons[5].state > 0)
+        {
+          mainButtons[5].state = 0;
+          currentMenu = 3;
           currentButton = 0;
         }
       }
@@ -607,9 +705,9 @@ int main()
         maxBtn = 13;
         drawButtons(keybindButtons, 14);
 
-        if(Controller.ButtonA.pressing())
+        if(Controller.ButtonA.pressing() || Controller.ButtonY.pressing())
         {
-          if(Controller.ButtonA.pressing() || Controller.ButtonY.pressing())
+          if(Controller.ButtonA.pressing())
           {
             keybindButtons[currentButton].state++;
             if(keybindButtons[currentButton].state > keybindButtons[currentButton].size - 1) keybindButtons[currentButton].state = 0;
@@ -683,7 +781,7 @@ int main()
             else if(Controller.ButtonY.pressing())
             {
               backButtons2x2[currentButton - 1].state--;
-              if(backButtons2x2[currentButton - 1].state < 0) backButtons2x2[currentButton - 1].state = backButtons2x2[currentButton].size - 1;
+              if(backButtons2x2[currentButton - 1].state < 0) backButtons2x2[currentButton - 1].state = backButtons2x2[currentButton - 1].size - 1;
             }
           }
         }
@@ -702,7 +800,7 @@ int main()
           t_2b = true;
         }
       }
-      else if(currentMenu == 4) //controls menu
+      else if(currentMenu == 3) //joysticks menu
       {
         btnNextRow = 5;
         maxBtn = 6;
@@ -712,7 +810,426 @@ int main()
         t_btn[5] = backButtons2x2[0];
         t_btn[6] = backButtons2x2[1];
         drawButtons(t_btn, 7);
+
+        if(Controller.ButtonA.pressing() || Controller.ButtonY.pressing())
+        {
+          if(currentButton < 5)
+          {
+            if(Controller.ButtonA.pressing())
+            {
+              joystickButtons[currentButton].state++;
+              if(joystickButtons[currentButton].state > joystickButtons[currentButton].size - 1) joystickButtons[currentButton].state = 0;
+            }
+            else if(Controller.ButtonY.pressing())
+            {
+              joystickButtons[currentButton].state--;
+              if(joystickButtons[currentButton].state < 0) joystickButtons[currentButton].state = joystickButtons[currentButton].size - 1;
+            }
+          }
+          else
+          {
+            if(Controller.ButtonA.pressing())
+            {
+              backButtons2x2[currentButton - 5].state++;
+              if(backButtons2x2[currentButton - 5].state > backButtons2x2[currentButton - 5].size - 1) backButtons2x2[currentButton - 5].state = 0;
+            }
+            else if(Controller.ButtonY.pressing())
+            {
+              backButtons2x2[currentButton - 5].state--;
+              if(backButtons2x2[currentButton - 5].state < 0) backButtons2x2[currentButton - 5].state = backButtons2x2[currentButton - 5].size - 1;
+            }
+          }
+        }
+        if(LCD.pressing())
+        {
+          buttonTouch(joystickButtons, 5);
+          buttonTouch(backButtons2x2, 2);
+        }
+
+        if(joystickButtons[3].state > 0)
+        {
+          joystickButtons[3].state = 0;
+          currentMenu = 4;
+          currentButton = 0;
+        }
+
+        if(joystickButtons[1].state > 0)
+        {
+          joystickButtons[1].state = 0;
+          currentMenu = 6;
+          currentButton = 0;
+        }
+
+        if(backButtons2x2[1].state == 1 || Controller.ButtonX.pressing()) applied = true;
+
+        if(backButtons2x2[0].state == 1 || Controller.ButtonB.pressing())
+        {
+          backButtons2x2[0].state = 0;
+          currentMenu = 0;
+          currentButton = 0;
+        }
       }
+      else if(currentMenu == 4) //deadbands menu
+      {
+        if(t_2b) 
+        {
+          currentButton = t_prevBtn;
+          t_2b = false;
+        }
+        btnNextRow = 4;
+        maxBtn = 5;
+
+        s_button t_btn[6];
+        for(int i = 0; i < 4; i++) t_btn[i] = deadbandsButtons[i];
+        t_btn[4] = backButtons2x2[0];
+        t_btn[5] = backButtons2x2[1];
+        drawButtons(t_btn, 6);
+
+        if(Controller.ButtonA.pressing() || Controller.ButtonY.pressing())
+        {
+          if(currentButton < 4)
+          {
+            if(Controller.ButtonA.pressing())
+            {
+              deadbandsButtons[currentButton].state++;
+              if(deadbandsButtons[currentButton].state > deadbandsButtons[currentButton].size - 1) deadbandsButtons[currentButton].state = 0;
+            }
+            else if(Controller.ButtonY.pressing())
+            {
+              deadbandsButtons[currentButton].state--;
+              if(deadbandsButtons[currentButton].state < 0) deadbandsButtons[currentButton].state = deadbandsButtons[currentButton].size - 1;
+            }
+          }
+          else
+          {
+            if(Controller.ButtonA.pressing())
+            {
+              backButtons2x2[currentButton - 4].state++;
+              if(backButtons2x2[currentButton - 4].state > backButtons2x2[currentButton - 4].size - 1) backButtons2x2[currentButton - 4].state = 0;
+            }
+            else if(Controller.ButtonY.pressing())
+            {
+              backButtons2x2[currentButton - 4].state--;
+              if(backButtons2x2[currentButton - 4].state < 0) backButtons2x2[currentButton - 4].state = backButtons2x2[currentButton-4].size - 1;
+            }
+          }
+        }
+        if(LCD.pressing())
+        {
+          buttonTouch(deadbandsButtons, 4);
+          buttonTouch(backButtons2x2, 2);
+        }
+
+        for(int i = 0; i < 4; i++)
+        {
+          if(deadbandsButtons[i].state > 0)
+          {
+            t_prevBtn = currentButton;
+            currentButton = 0;
+            deadbandsButtons[i].state = 0;
+            currentDeadband = i;
+            currentMenu = 5;
+            break;
+          }
+        }
+
+        if(backButtons2x2[1].state == 1 || Controller.ButtonX.pressing()) applied = true;
+
+        if(backButtons2x2[0].state == 1 || Controller.ButtonB.pressing())
+        {
+          backButtons2x2[0].state = 0;
+          currentMenu = 3;
+          currentButton = 0;
+        }
+      }
+      else if(currentMenu == 5) //deadbands axis submenu
+      {
+        btnNextRow = 2;
+        maxBtn = 2;
+
+        s_button t_btn[3];
+        t_btn[0] = dButtons[currentDeadband];
+        t_btn[1] = backButtons2x2[0];
+        t_btn[2] = backButtons2x2[1];
+        drawButtons(t_btn, 3);
+
+        if(Controller.ButtonA.pressing() || Controller.ButtonY.pressing())
+        {
+          if(currentButton == 0)
+          {
+            if(Controller.ButtonA.pressing())
+            {
+              dButtons[currentDeadband].state++;
+              if(dButtons[currentDeadband].state > dButtons[currentDeadband].size - 1) dButtons[currentDeadband].state = 0;
+            }
+            else if(Controller.ButtonY.pressing())
+            {
+              dButtons[currentDeadband].state--;
+              if(dButtons[currentDeadband].state < 0) dButtons[currentDeadband].state = dButtons[currentDeadband].size - 1;
+            }
+          }
+          else
+          {
+            if(Controller.ButtonA.pressing())
+            {
+              backButtons2x2[currentButton - 1].state++;
+              if(backButtons2x2[currentButton - 1].state > backButtons2x2[currentButton - 1].size - 1) backButtons2x2[currentButton - 1].state = 0;
+            }
+            else if(Controller.ButtonY.pressing())
+            {
+              backButtons2x2[currentButton - 1].state--;
+              if(backButtons2x2[currentButton - 1].state < 0) backButtons2x2[currentButton - 1].state = backButtons2x2[currentButton - 1].size - 1;
+            }
+          }
+        }
+        if(LCD.pressing())
+        {
+          dButtons[currentDeadband] = buttonTouch(dButtons[currentDeadband]);
+          buttonTouch(backButtons2x2, 2);
+        }
+
+        if(backButtons2x2[1].state == 1 || Controller.ButtonX.pressing()) applied = true;
+
+        if(backButtons2x2[0].state == 1 || Controller.ButtonB.pressing())
+        {
+          backButtons2x2[0].state = 0;
+          currentMenu = 4;
+          t_2b = true;
+        }
+      }
+      else if(currentMenu == 6) //turn type
+      {
+        if(joystickButtons[0].state == 0) //tank
+        {
+          btnNextRow = 2;
+          maxBtn = 2;
+          s_button t_btn[3];
+          t_btn[0] = messageButtons[0];
+          t_btn[1] = backButtons2x2[0];
+          t_btn[2] = backButtons2x2[1];
+          drawButtons(t_btn, 3);
+
+          if(Controller.ButtonA.pressing() || Controller.ButtonY.pressing())
+          {
+            if(currentButton != 0)
+            {
+              if(Controller.ButtonA.pressing())
+              {
+                backButtons2x2[currentButton - 1].state++;
+                if(backButtons2x2[currentButton - 1].state > backButtons2x2[currentButton - 1].size - 1) backButtons2x2[currentButton - 1].state = 0;
+              }
+              else if(Controller.ButtonY.pressing())
+              {
+                backButtons2x2[currentButton - 1].state--;
+                if(backButtons2x2[currentButton - 1].state < 0) backButtons2x2[currentButton - 1].state = backButtons2x2[currentButton - 1].size - 1;
+              }
+            }
+          }
+          if(LCD.pressing())
+          {
+            messageButtons[0] = buttonTouch(messageButtons[0]);
+            buttonTouch(backButtons2x2, 2);
+          }
+
+          if(backButtons2x2[1].state == 1 || Controller.ButtonX.pressing()) applied = true;
+
+          if(backButtons2x2[0].state == 1 || Controller.ButtonB.pressing())
+          {
+            backButtons2x2[0].state = 0;
+            currentMenu = 3;
+          }
+        }
+        else if(joystickButtons[0].state == 1) //1 arcade
+        {
+          btnNextRow = 3;
+          maxBtn = 4;
+          s_button t_btn[5];
+          t_btn[0] = turnTypeButtons[0];
+          if(turnTypeButtons[0].state == 0) //relative
+          {
+            t_btn[1] = ttr1Buttons[0];
+            t_btn[2] = ttr1Buttons[1];
+          }
+          else if(turnTypeButtons[0].state == 1) //absolute
+          {
+            t_btn[1] = tta1Buttons[0];
+            t_btn[2] = tta1Buttons[1];
+          }
+          t_btn[3] = backButtons2x2[0];
+          t_btn[4] = backButtons2x2[1];
+          drawButtons(t_btn, 5);
+
+          if(Controller.ButtonA.pressing() || Controller.ButtonY.pressing())
+          {
+            if(currentButton == 0)
+            {
+              if(Controller.ButtonA.pressing())
+              {
+                turnTypeButtons[0].state++;
+                if(turnTypeButtons[0].state > turnTypeButtons[0].size - 1) turnTypeButtons[0].state = 0;
+              }
+              else if(Controller.ButtonY.pressing())
+              {
+                turnTypeButtons[0].state--;
+                if(turnTypeButtons[0].state < 0) turnTypeButtons[0].state = turnTypeButtons[0].size - 1;
+              }
+            }
+            else if(currentButton > 2)
+            {
+              if(Controller.ButtonA.pressing())
+              {
+                backButtons2x2[currentButton - 3].state++;
+                if(backButtons2x2[currentButton - 3].state > backButtons2x2[currentButton - 3].size - 1) backButtons2x2[currentButton - 3].state = 0;
+              }
+              else if(Controller.ButtonY.pressing())
+              {
+                backButtons2x2[currentButton - 3].state--;
+                if(backButtons2x2[currentButton - 3].state < 0) backButtons2x2[currentButton - 3].state = backButtons2x2[currentButton - 3].size - 1;
+              }
+            }
+          }
+          if(LCD.pressing())
+          {
+            turnTypeButtons[0] = buttonTouch(turnTypeButtons[0]);
+            buttonTouch(backButtons2x2, 2);
+          }
+
+          if(backButtons2x2[1].state == 1 || Controller.ButtonX.pressing()) applied = true;
+
+          if(backButtons2x2[0].state == 1 || Controller.ButtonB.pressing())
+          {
+            backButtons2x2[0].state = 0;
+            currentMenu = 3;
+          }
+        }
+        else if(joystickButtons[0].state == 2) //2 arcade
+        {
+          btnNextRow = 3;
+          maxBtn = 4;
+          s_button t_btn[5];
+          t_btn[0] = turnTypeButtons[1];
+          if(turnTypeButtons[1].state == 0) //relative
+          {
+            t_btn[1] = ttr2Buttons[0];
+            t_btn[2] = ttr2Buttons[1];
+          }
+          else if(turnTypeButtons[1].state == 1) //absolute
+          {
+            t_btn[1] = tta2Buttons[0];
+            t_btn[2] = tta2Buttons[1];
+          }
+          t_btn[3] = backButtons2x2[0];
+          t_btn[4] = backButtons2x2[1];
+          drawButtons(t_btn, 5);
+
+          if(Controller.ButtonA.pressing() || Controller.ButtonY.pressing())
+          {
+            if(currentButton == 0)
+            {
+              if(Controller.ButtonA.pressing())
+              {
+                turnTypeButtons[1].state++;
+                if(turnTypeButtons[1].state > turnTypeButtons[1].size - 1) turnTypeButtons[1].state = 0;
+              }
+              else if(Controller.ButtonY.pressing())
+              {
+                turnTypeButtons[1].state--;
+                if(turnTypeButtons[1].state < 0) turnTypeButtons[1].state = turnTypeButtons[1].size - 1;
+              }
+            }
+            else if(currentButton > 2)
+            {
+              if(Controller.ButtonA.pressing())
+              {
+                backButtons2x2[currentButton - 3].state++;
+                if(backButtons2x2[currentButton - 3].state > backButtons2x2[currentButton - 3].size - 1) backButtons2x2[currentButton - 3].state = 0;
+              }
+              else if(Controller.ButtonY.pressing())
+              {
+                backButtons2x2[currentButton - 3].state--;
+                if(backButtons2x2[currentButton - 3].state < 0) backButtons2x2[currentButton - 3].state = backButtons2x2[currentButton - 3].size - 1;
+              }
+            }
+          }
+          if(LCD.pressing())
+          {
+            turnTypeButtons[0] = buttonTouch(turnTypeButtons[0]);
+            buttonTouch(backButtons2x2, 2);
+          }
+
+          if(backButtons2x2[1].state == 1 || Controller.ButtonX.pressing()) applied = true;
+
+          if(backButtons2x2[0].state == 1 || Controller.ButtonB.pressing())
+          {
+            backButtons2x2[0].state = 0;
+            currentMenu = 3;
+          }
+        }
+      }
+      else if(currentMenu == 7) //settings menu
+      {
+        btnNextRow = 2;
+        maxBtn = 3;
+
+        s_button t_btn[4];
+        t_btn[0] = settingsButtons[0];
+        t_btn[1] = settingsButtons[1];
+        t_btn[2] = backButtons2x2[0];
+        t_btn[3] = backButtons2x2[1];
+        drawButtons(t_btn, 4);
+
+        if(Controller.ButtonA.pressing() || Controller.ButtonY.pressing())
+        {
+          if(currentButton < 2)
+          {
+            if(Controller.ButtonA.pressing())
+            {
+              settingsButtons[currentButton].state++;
+              if(settingsButtons[currentButton].state > settingsButtons[currentButton].size - 1) settingsButtons[currentButton].state = 0;
+            }
+            else if(Controller.ButtonY.pressing())
+            {
+              settingsButtons[currentButton].state--;
+              if(settingsButtons[currentButton].state < currentButton) settingsButtons[currentButton].state = settingsButtons[currentButton].size - 1;
+            }
+          }
+          else
+          {
+            if(Controller.ButtonA.pressing())
+            {
+              backButtons2x2[currentButton - 2].state++;
+              if(backButtons2x2[currentButton - 2].state > backButtons2x2[currentButton - 2].size - 1) backButtons2x2[currentButton - 2].state = 0;
+            }
+            else if(Controller.ButtonY.pressing())
+            {
+              backButtons2x2[currentButton - 2].state--;
+              if(backButtons2x2[currentButton - 2].state < 0) backButtons2x2[currentButton - 2].state = backButtons2x2[currentButton - 2].size - 1;
+            }
+          }
+        }
+        if(LCD.pressing())
+        {
+          buttonTouch(settingsButtons, 2);
+          buttonTouch(backButtons2x2, 2);
+        }
+
+        if(backButtons2x2[1].state == 1 || Controller.ButtonX.pressing()) applied = true;
+
+        if(backButtons2x2[0].state == 1 || Controller.ButtonB.pressing())
+        {
+          backButtons2x2[0].state = 0;
+          currentMenu = 1;
+        }
+      }
+
+      if(Controller.ButtonA.pressing() || Controller.ButtonB.pressing() || Controller.ButtonX.pressing() || Controller.ButtonY.pressing() ||
+      Controller.ButtonUp.pressing() || Controller.ButtonDown.pressing() || Controller.ButtonLeft.pressing() || Controller.ButtonRight.pressing() || 
+      Controller.ButtonL1.pressing()  || Controller.ButtonL2.pressing()  || Controller.ButtonR1.pressing()  || Controller.ButtonR2.pressing() || 
+      Controller.Axis3.position() < -threshold3 || Controller.Axis4.position() < -threshold4 || Controller.Axis3.position() > threshold3 || Controller.Axis4.position() > threshold4 ||
+      Controller.Axis1.position() < -threshold1 || Controller.Axis2.position() < -threshold2 || Controller.Axis1.position() > threshold1|| Controller.Axis2.position() > threshold2 ||
+      LCD.pressing())
+      Task.sleep(250);
+      else Task.sleep(15);
     }
 
     LCD.clearScreen();
@@ -722,7 +1239,7 @@ int main()
     {
       LCD.print("NO SD CARD");
       LCD.render();
-      Controller.rumble("--------");
+      while(true) Controller.rumble("-");
     }
     else
     {
@@ -733,18 +1250,37 @@ int main()
       ofs.close();
 
       ofs.open("keybinds.txt", ofs.out);
-      ofs << IFTexts[fButtons[0].state].Index << "\n";
-      ofs << IFTexts[fButtons[1].state].Index << "\n";
-      ofs << IFTexts[fButtons[2].state].Index << "\n";
-      ofs << IFTexts[fButtons[3].state].Index << "\n";
-      ofs << IFTexts[fButtons[4].state].Index << "\n";
-      ofs << IFTexts[fButtons[5].state].Index << "\n";
-      ofs << IFTexts[fButtons[6].state].Index << "\n";
-      ofs << IFTexts[fButtons[7].state].Index << "\n";
-      ofs << IFTexts[fButtons[8].state].Index << "\n";
-      ofs << IFTexts[fButtons[9].state].Index << "\n";
-      ofs << IFTexts[fButtons[10].state].Index << "\n";
-      ofs << IFTexts[fButtons[11].state].Index;
+      ofs << iTexts[fButtons[0].state].Index << "\n";
+      ofs << iTexts[fButtons[1].state].Index << "\n";
+      ofs << iTexts[fButtons[2].state].Index << "\n";
+      ofs << iTexts[fButtons[3].state].Index << "\n";
+      ofs << iTexts[fButtons[4].state].Index << "\n";
+      ofs << iTexts[fButtons[5].state].Index << "\n";
+      ofs << iTexts[fButtons[6].state].Index << "\n";
+      ofs << iTexts[fButtons[7].state].Index << "\n";
+      ofs << iTexts[fButtons[8].state].Index << "\n";
+      ofs << iTexts[fButtons[9].state].Index << "\n";
+      ofs << iTexts[fButtons[10].state].Index << "\n";
+      ofs << iTexts[fButtons[11].state].Index;
+      ofs.close();
+
+      ofs.open("joysticks.txt", ofs.out);
+      ofs << joystickButtons[0].state << "\n";
+      if(joystickButtons[0].state == 0) ofs << 0 << "\n";
+      else if(joystickButtons[0].state == 1) ofs << turnTypeButtons[0].state + 1 << "\n";
+      else if(joystickButtons[0].state == 2) ofs << turnTypeButtons[1].state + 1 << "\n";
+      ofs.close();
+
+      ofs.open("deadbands.txt", ofs.out);
+      ofs << deadbandIText[dButtons[0].state].Index << "\n";
+      ofs << deadbandIText[dButtons[1].state].Index << "\n";
+      ofs << deadbandIText[dButtons[2].state].Index << "\n";
+      ofs << deadbandIText[dButtons[3].state].Index;
+      ofs.close();
+
+      ofs.open("settings.txt", ofs.out);
+      ofs << settingsButtons[0].state << "\n";
+      ofs << settingsButtons[1].state;
       ofs.close();
 
       LCD.print("Config files saved");
@@ -755,6 +1291,6 @@ int main()
   {
     LCD.print("NO SD CARD");
     LCD.render();
-    Controller.rumble("--------"); 
+    while(true) Controller.rumble("-"); 
   }
 }
